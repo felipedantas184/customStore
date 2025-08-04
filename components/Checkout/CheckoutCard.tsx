@@ -12,7 +12,7 @@ const CheckoutCard = ({product} : {product : CartItem}) => {
   return (
     <Card>
       <ImageWrapper href={'/'}>
-        <Image src={product.imageUrl[0]} alt={product.title} fill className={'image'} sizes="(max-width: 384px)" />
+        <Image src={product.imageUrl ? product.imageUrl[0] : 'https://agprata.vercel.app/assets/icons/logo-og.jpg'} alt={product.title} fill className={'image'} sizes="(max-width: 384px)" />
       </ImageWrapper>
       <TextWrapper>
         <Brand>{product.category}</Brand>
