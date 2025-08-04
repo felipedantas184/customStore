@@ -17,7 +17,6 @@ const CheckoutList = () => {
       {cart.map((product : CartItem) => (
         <CheckoutCard key={product.id} product={product} />
       ))}
-      <Divider />
       <CheckoutResume cart={cart} />
       <Divider />
     </Wrapper>

@@ -8,6 +8,7 @@ type Delivery = {
   number: string,
   city: string,
   state: string,
+  freight: number
 }
 
 const Delivery = ({ delivery, setDelivery }: { delivery: Delivery, setDelivery: any }) => {
@@ -16,8 +17,28 @@ const Delivery = ({ delivery, setDelivery }: { delivery: Delivery, setDelivery: 
       if (!e.target.value) return; 
       const cep = e.target.value.replace(/\D/g, '');
       await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(res => res.json()).then(data => {
-        console.log(data);
-        setDelivery({...delivery, address: data.logradouro, district: data.bairro, city: data.localidade, state: data.uf})
+        const { localidade, uf, logradouro, bairro } = data;
+        let freight = 25; // valor padrão
+
+        const cidade = localidade?.toLowerCase();
+        const estado = uf?.toUpperCase();
+
+        if (cidade === 'teresina') {
+          freight = 10;
+        } else if (cidade === 'timon') {
+          freight = 20;
+        } else if (['MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA'].includes(estado)) {
+          freight = 20;
+        }
+
+        setDelivery({
+          ...delivery,
+          address: logradouro,
+          district: bairro,
+          city: localidade,
+          state: uf,
+          freight, // novo campo
+        });
       })
     } catch(err) {
       console.log(err)

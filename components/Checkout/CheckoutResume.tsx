@@ -4,15 +4,7 @@ const CheckoutResume = ({cart}:any) => {
   return ( 
     <>
       <TopicWrapper>
-        <Topic>Frete</Topic>
-        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(0)}</Span>
-      </TopicWrapper>
-      <TopicWrapper>
-        <Topic>Total de itens</Topic>
-        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc:any, curr:any) => acc + curr.price*curr.quantity, 0))}</Span>
-      </TopicWrapper>
-      <TopicWrapper>
-        <TopicBold>Valor Total</TopicBold>
+        <TopicBold>Valor Itens</TopicBold>
         <SpanBold>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc:any, curr:any) => acc + curr.price*curr.quantity, 0))}</SpanBold>
       </TopicWrapper>
     </>
@@ -29,16 +21,7 @@ const TopicWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`
-const Topic = styled.span`
-  color: #13131A;
-  font-size: 14px;
-  font-weight: 500;
-`
-const Span = styled.span`
-  color: #13131A;
-  font-size: 14px;
-  font-weight: 400;
+  padding: 8px 8px 0 8px;
 `
 const TopicBold = styled.span`
   color: #13131A;

@@ -20,7 +20,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       <ImageContainer>
         <ImageWrapper href={`/${product.id}`}>
           <Image
-            src={product.imageUrl[0]}
+            src={product.imageUrl ? product.imageUrl[0] : 'https://agprata.vercel.app/assets/icons/logo-og.jpg'}
             alt={product.title}
             fill
             sizes="(max-width: 384px)"

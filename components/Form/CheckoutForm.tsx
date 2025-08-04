@@ -37,6 +37,7 @@ const CheckoutForm = () => {
     number: '',
     city: '',
     state: '',
+    freight: 0,
   })
   const [paymentMethod, setPaymentMethod] = useState('Pix');
   const [mesage, setMesage] = useState('');
@@ -111,7 +112,7 @@ const CheckoutForm = () => {
       alert("Pedido enviado com sucesso!");
     } catch (error) {
       console.error("Erro ao processar o pedido:", error);
-      alert("Houve um erro ao processar seu pedido. Tente novamente.");    
+      alert("Houve um erro ao processar seu pedido. Tente novamente.");
     }
   }
 
@@ -136,8 +137,16 @@ const CheckoutForm = () => {
       <Payment paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
       <Divider />
       <TopicWrapper>
+        <TopicFreight>Frete</TopicFreight>
+        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(delivery.freight)}</Span>
+      </TopicWrapper>
+      <TopicWrapper>
+        <TopicFreight>Valor Itens</TopicFreight>
+        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0))}</Span>
+      </TopicWrapper>
+      <TopicWrapper>
         <Topic>Total</Topic>
-        <Price>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0))}</Price>
+        <Price>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0) + delivery.freight)}</Price>
       </TopicWrapper>
       <CheckoutButton disabled={onLoad} type="submit" >{(onLoad) ? 'Processando Pedido...' : 'Finalizar Pedido'}</CheckoutButton>
     </Wrapper>
@@ -189,6 +198,16 @@ const Topic = styled.span`
   color: #13131A;
   font-size: 18px;
   font-weight: 600;
+`
+const TopicFreight = styled.span`
+  color: #13131A;
+  font-size: 14px;
+  font-weight: 500;
+`
+const Span = styled.span`
+  color: #13131A;
+  font-size: 14px;
+  font-weight: 400;
 `
 const Price = styled.span`
   color: #13131A;
