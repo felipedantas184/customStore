@@ -21,13 +21,13 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
   const [isCopied, setIsCopied] = useState(false);
   
   const qrCodePix = QrCodePix({
-    version: '01',
-    key: '86999533190', //or any PIX key
-    name: 'Ana Gabriella Rocha Braga',
+     version: '01',
+    key: 'fac7a341aeac442285fd9fe2865ba9ea', //or any PIX key
+    name: 'Felipe Augusto Oliveira Dantas',
     city: 'Teresina',
     transactionId: order.id,
-    message: `Compra na loja AG Joias. Código do pedido: ${order.id}`,
-    cep: '4008364',
+    message: `Compra na loja Tecdata. Código do pedido: ${order.id}`,
+    cep: '64091250',
     value: order.amount,
   });
 

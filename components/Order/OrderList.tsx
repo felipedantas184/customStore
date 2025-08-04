@@ -13,8 +13,16 @@ const OrderList = ({ order }: { order: Order }) => {
         ))}
         <Divider />
         <TopicWrapper>
+          <Topic>Valor Frete</Topic>
+          <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.delivery ? order.delivery.freight : 0)}</Span>
+        </TopicWrapper>
+        <TopicWrapper>
+          <Topic>Valor Itens</Topic>
+          <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.amount)}</Span>
+        </TopicWrapper>
+        <TopicWrapper>
           <TopicBold>Valor Total</TopicBold>
-          <SpanBold>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.amount)}</SpanBold>
+          <SpanBold>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.delivery ? order.amount + order.delivery.freight : order.amount)}</SpanBold>
         </TopicWrapper>
       </Summary>
     </Wrapper>
@@ -74,10 +82,20 @@ const TopicWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 `
+const Topic = styled.span`
+  color: #13131A;
+  font-size: 14px;
+  font-weight: 500;
+`
 const TopicBold = styled.span`
   color: #13131A;
   font-size: 16px;
   font-weight: 600;
+`
+const Span = styled.span`
+  color: #13131A;
+  font-size: 14px;
+  font-weight: 500;
 `
 const SpanBold = styled.span`
   color: #13131A;

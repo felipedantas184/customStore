@@ -73,6 +73,7 @@ type Order = {
     number: string,
     city: string,
     state: string,
+    freight: number
   }
   paymentMethod: string,
   personal: {
