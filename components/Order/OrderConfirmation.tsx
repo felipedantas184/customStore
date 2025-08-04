@@ -22,7 +22,7 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
   
   const qrCodePix = QrCodePix({
      version: '01',
-    key: 'fac7a341aeac442285fd9fe2865ba9ea', //or any PIX key
+    key: '05620204383', //or any PIX key
     name: 'Felipe Augusto Oliveira Dantas',
     city: 'Teresina',
     transactionId: order.id,
