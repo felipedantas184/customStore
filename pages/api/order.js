@@ -154,7 +154,7 @@ const handler = async (req, res) => {
 
     const mailOptions = {
       from: email,
-      to: data.personal.email,
+      to: [data.personal.email, storeData.email],
     };
 
     try {
