@@ -36,7 +36,7 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
       <TextWrapper>
         <FaHourglassHalf size={48} color="#a07c08" />
         <Title>Falta Pouco!<br /> Efetue o pagamento para confirmar o pedido!</Title>
-        <Subtitle style={{textAlign: 'center'}} >Leia o QR Code para efetuar o pagamento.<br/>A confirmação do seu pedido pode levar algum tempo.</Subtitle>
+        <Subtitle style={{textAlign: 'center'}} >Leia o QR Code para efetuar o pagamento.<br/>Se você já fez o pagamento, fique tranquilo! Entraremos em contato.</Subtitle>
         <QRCodeSVG
           value={qrCodePix.payload()}
           size={210}
@@ -45,7 +45,7 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
           level={'L'}
         />
         <QrCodeString>
-          <Subtitle>{qrCodePix.payload()}</Subtitle>
+          <QRCopy>{qrCodePix.payload()}</QRCopy>
           {(!isCopied) ? (
           <Subtitle onClick={() => {navigator.clipboard.writeText(qrCodePix.payload()); setIsCopied(true)}} style={{alignSelf: 'flex-end' , color: '#13131A', cursor: 'pointer'}}>Clique aqui para copiar o código! <FaClipboard style={{cursor: 'pointer'}} size={16}/></Subtitle>  
           ) : (
@@ -102,6 +102,17 @@ export const Subtitle = styled.span`
   color: #5A5A5A;
   font-size: 14px;
   font-weight: 500;
+`
+export const QRCopy = styled.span`
+  color: #5A5A5A;
+  font-size: 14px;
+  font-weight: 500;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* máximo de 2 linhas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 export const QrCodeString = styled.div`
   padding: 8px;

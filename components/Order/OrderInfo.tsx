@@ -1,5 +1,7 @@
 import { Order } from "@/types/productType";
+import storeData from "@/utils/storeData";
 import { FaCreditCard, FaPix } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
 import styled from "styled-components";
 
 const OrderInfo = ({ order }: { order: Order }) => {
@@ -11,7 +13,7 @@ const OrderInfo = ({ order }: { order: Order }) => {
         {(order.deliveryType === "pickup") ? (
           <InfoWrapper>
             <Topic>Retirada na Loja</Topic>
-            <Span>Clique para ver a localização da Loja</Span>
+            <SpanLink target='_blank' href={storeData.locationUrl} arial-label='Google Maps'><IoLocationOutline size={20} color={storeData.secondaryColor} />Clique para ver a localização da Loja</SpanLink>
           </InfoWrapper>
         ) : (
           <>
@@ -87,6 +89,16 @@ const Span = styled.span`
   color: #13131A;
   font-size: 14px;
   font-weight: 500;
+`
+const SpanLink = styled.a`
+  color: #13131A;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
 `
 const Summary = styled.div`
   width: 100%;

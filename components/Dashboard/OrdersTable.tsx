@@ -87,7 +87,7 @@ const OrdersTable = ({
                 <Td>{(order.deliveryType === 'pickup' ? "Retirada" : `${order.delivery?.address}, ${order.delivery?.number}`)}</Td>
                 <Td>{order.cart.reduce((acc: any, curr: any) => `${acc} ${getProductName(curr.productId)} ${getVariantName(curr.productId, curr.variantId)} (x${curr.quantity})`, '')}</Td>
                 <Td>{order.paymentMethod}</Td>
-                <Td>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.amount)}</Td>
+                <Td>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(order.delivery ? order.delivery.freight + order.amount : order.amount)}</Td>
                 <Td>{order.timeStamp.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$3/$2/$1 $4:$5:$6')}</Td>
                 {(editingOrder === order) ? (
                   <Td>
