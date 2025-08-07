@@ -19,9 +19,9 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
   */}
 
   const [isCopied, setIsCopied] = useState(false);
-  
+
   const qrCodePix = QrCodePix({
-     version: '01',
+    version: '01',
     key: '+5586999533190', //or any PIX key
     name: 'Ana Gabriella Rocha Braga',
     city: 'Teresina',
@@ -36,7 +36,7 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
       <TextWrapper>
         <FaHourglassHalf size={48} color="#a07c08" />
         <Title>Falta Pouco!<br /> Efetue o pagamento para confirmar o pedido!</Title>
-        <Subtitle style={{textAlign: 'center'}} >Leia o QR Code para efetuar o pagamento.<br/>Se você já fez o pagamento, fique tranquilo! Entraremos em contato.</Subtitle>
+        <Subtitle style={{ textAlign: 'center' }} >Leia o QR Code para efetuar o pagamento.<br />Se você já fez o pagamento, fique tranquilo! Entraremos em contato.</Subtitle>
         <QRCodeSVG
           value={qrCodePix.payload()}
           size={210}
@@ -47,11 +47,13 @@ const OrderConfirmation = ({ order }: { order: Order }) => {
         <QrCodeString>
           <QRCopy>{qrCodePix.payload()}</QRCopy>
           {(!isCopied) ? (
-          <Subtitle onClick={() => {navigator.clipboard.writeText(qrCodePix.payload()); setIsCopied(true)}} style={{alignSelf: 'flex-end' , color: '#13131A', cursor: 'pointer'}}>Clique aqui para copiar o código! <FaClipboard style={{cursor: 'pointer'}} size={16}/></Subtitle>  
+            <Subtitle onClick={() => { navigator.clipboard.writeText(qrCodePix.payload()); setIsCopied(true) }} style={{ alignSelf: 'flex-end', color: '#13131A', cursor: 'pointer' }}>Clique aqui para copiar o código! <FaClipboard style={{ cursor: 'pointer' }} size={16} /></Subtitle>
           ) : (
-            <Subtitle onClick={() => {navigator.clipboard.writeText(qrCodePix.payload()); setIsCopied(false)}} style={{alignSelf: 'flex-end' , color: '#13131A'}}>Código copiado! <FaClipboardCheck size={16}/></Subtitle>  
+            <Subtitle onClick={() => { navigator.clipboard.writeText(qrCodePix.payload()); setIsCopied(false) }} style={{ alignSelf: 'flex-end', color: '#13131A' }}>Código copiado! <FaClipboardCheck size={16} /></Subtitle>
           )}
         </QrCodeString>
+        <Subtitle style={{ textAlign: 'center' }} >Pagamentos via cartão / espécie serão combinados pelo WhatsApp oficial da loja!</Subtitle>
+
         {/**<CheckoutButton href={`https://wa.me//5586995185757?text=${message}`}>Enviar Pedido</CheckoutButton>*/}
       </TextWrapper>
     </Wrapper>

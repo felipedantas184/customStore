@@ -10,7 +10,7 @@ const Payment = ({paymentMethod, setPaymentMethod}: any) => {
         <Option value={'Cartão'} >Cartão - A Combinar</Option>
         <Option value={'Espécie'} >Espécie - A Combinar</Option>
       </Select>
-      <span style={{fontSize: 12}}>Pagamentos via cartão / espécie serão combinados via WhatsApp oficial da loja</span>
+      <span style={{fontSize: 12}}>Pagamentos via cartão / espécie serão combinados pelo WhatsApp oficial da loja</span>
     </InputWrapper>
   );
 }

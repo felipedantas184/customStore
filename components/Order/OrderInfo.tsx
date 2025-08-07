@@ -1,6 +1,6 @@
 import { Order } from "@/types/productType";
 import storeData from "@/utils/storeData";
-import { FaCreditCard, FaPix } from "react-icons/fa6";
+import { FaCreditCard, FaPix, FaWhatsapp } from "react-icons/fa6";
 import { IoLocationOutline } from "react-icons/io5";
 import styled from "styled-components";
 
@@ -31,9 +31,9 @@ const OrderInfo = ({ order }: { order: Order }) => {
             </InfoWrapper>
             {(order.delivery?.complement) ? (
               <InfoWrapper>
-              <Topic>Complemento</Topic>
-              <Span>{order.delivery?.complement}</Span>
-            </InfoWrapper>
+                <Topic>Complemento</Topic>
+                <Span>{order.delivery?.complement}</Span>
+              </InfoWrapper>
             ) : (<></>)}
           </>
         )}
@@ -47,6 +47,9 @@ const OrderInfo = ({ order }: { order: Order }) => {
             <FaCreditCard size={24} color="#32BCAD" />
           )}
           <Span>{order.paymentMethod}</Span>
+          <Span>                
+            <a target='_blank' href={`https://wa.me//${storeData.whatsAppNumber}?text=Ol%C3%A1!%20Vim%20a%20partir%20do%20site!`} arial-label='WhatsApp'><FaWhatsapp size={18} color={storeData.primaryColor} />WhatsApp</a>
+          </Span>
         </PaymentWrapper>
       </Summary>
     </Wrapper>
