@@ -13,7 +13,7 @@ export default async function handler(
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { items } = req.body || { items: [] };
+  const { items, delivery } = req.body || { items: [], delivery: null };
 
   // Caso items esteja vazio, usar valores de exemplo
   const defaultItems = [
@@ -60,14 +60,26 @@ export default async function handler(
   try {
     const newPreference = new Preference(mercadopago);
 
+    const products = (items && items.length > 0 ? items : defaultItems).map((item: any) => ({
+      title: `${item.product.title} - ${item.variantName}`,
+      quantity: Number(item.quantity),
+      currency_id: "BRL",
+      unit_price: Number(item.price),
+    }));
+
+    // Se houver frete, adiciona como item extra
+    if (delivery?.freight) {
+      products.push({
+        title: "Frete",
+        quantity: 1,
+        currency_id: "BRL",
+        unit_price: Number(delivery.freight),
+      });
+    }
+
     const preference = await newPreference.create({
       body: {
-        items: (items && items.length > 0 ? items : defaultItems).map((item: any) => ({
-          title: `${item.product.title} - ${item.variantName}`,
-          quantity: Number(item.quantity),
-          currency_id: "BRL",
-          unit_price: Number(item.price),
-        })),
+        items: products,
         back_urls: {
           success: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
           failure: `${process.env.NEXT_PUBLIC_BASE_URL}/failure`,
