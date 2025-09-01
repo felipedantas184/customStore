@@ -7,39 +7,52 @@ import Link from "next/link";
 import storeData from "@/utils/storeData";
 
 const ProductsList = ({ products }: { products: Product[] }) => {
-  const [selectedProduct, setSelectedProduct] = useState<string>('')
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [visibleCount, setVisibleCount] = useState<number>(10); // começa mostrando 10
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 10);
+  };
 
   return (
     <Wrapper>
       <Title>Produtos</Title>
-      {products.map((product: Product) => (
-        <div key={product.id} style={{width: '100%'}} >
-          <ProductsCard product={product} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
-          {(product.id === selectedProduct) ? (
+      {products.slice(0, visibleCount).map((product: Product) => (
+        <div key={product.id} style={{ width: '100%' }}>
+          <ProductsCard
+            product={product}
+            selectedProduct={selectedProduct}
+            setSelectedProduct={setSelectedProduct}
+          />
+          {product.id === selectedProduct && (
             <ProductUpdate product={product} setSelectedProduct={setSelectedProduct} />
-          ) : (
-            <></>
           )}
         </div>
       ))}
+
+      {/* Só mostra o botão se ainda houver mais produtos */}
+      {visibleCount < products.length && (
+        <LoadMoreButton onClick={handleShowMore}>
+          Ver mais
+        </LoadMoreButton>
+      )}
+
       <AddButton href={'/auth/register'}>Adicionar Produto</AddButton>
     </Wrapper>
   );
-}
+};
 
 export default ProductsList;
-
-
 
 const Wrapper = styled.div`
   width: 100%;
   padding: 16px;
-	margin-left: auto;
-	margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
 
   background-color: #FFF;
@@ -49,12 +62,14 @@ const Wrapper = styled.div`
   @media screen and (max-width: 768px) {
     padding: 8px;
   }
-`
+`;
+
 const Title = styled.h1`
   color: #13131A;
   font-size: 20px;
   font-weight: 700;
-`
+`;
+
 const AddButton = styled(Link)`
   width: 100%;
   margin: 0;
@@ -103,4 +118,24 @@ const AddButton = styled(Link)`
     box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
     transform: translateY(0);
   }
-`
+`;
+
+const LoadMoreButton = styled.button`
+  width: 100%;
+  margin: 0;
+  padding: 12px;
+  margin-top: 8px;
+
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: .25rem;
+  cursor: pointer;
+
+  font-family: "Montserrat";
+  font-size: 14px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #d5d5d5;
+  }
+`;

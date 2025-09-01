@@ -84,14 +84,14 @@ export default function DashboardPage({ products, orders }: { products: Product[
 
       <DashboardLayout>
         <Section>
-            <GeneralInfo orders={orders} />
-            <ProductsList products={products} />
+          <GeneralInfo orders={orders} />
           <OrdersTable
             orders={ordersState}
             setOrders={setOrdersState}
             getProductName={getProductName}
             getVariantName={getVariantName}
           />
+          <ProductsList products={products} />
         </Section>
       </DashboardLayout>
     </>
