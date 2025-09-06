@@ -14,7 +14,7 @@ const ProductsCard = ({product, selectedProduct, setSelectedProduct} : {product 
       </ImageWrapper>
       <TextWrapper>
         <SpaceBetween>
-          <Brand>{product.brand}</Brand>
+          <Brand>{product.category}</Brand>
           <DoubleIcon>
             <FaEdit style={{cursor: 'pointer'}} size={16} color="#D4D4D4" onClick={() => (selectedProduct === product.id) ? (setSelectedProduct('')) : (setSelectedProduct(product.id))} />
             <FaTrash style={{cursor: 'pointer'}} size={16} color="#F1AAAA" onClick={() => deleteProduct(product.id)} /> 

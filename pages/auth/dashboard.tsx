@@ -45,23 +45,17 @@ export default function DashboardPage({ products, orders }: { products: Product[
   const [ordersState, setOrdersState] = useState<Order[]>(orders);
 
   const getProductName = (productId: string) => {
-    const product = products.filter((product: any) => product.id == productId)
-    const productName = (product[0].title)
+    const product = products.find((product: any) => product.id === productId);
+    return product ? product.title : "Produto removido";
+  };
 
-    return productName
-  }
   const getVariantName = (productId: string, variantId: string) => {
-    const product = products.filter((product: any) => product.id == productId)
-    const productVariants = (product[0].variants)
+    const product = products.find((product: any) => product.id === productId);
+    if (!product) return "Produto removido";
 
-    const variant = productVariants.filter((variant: Variant) => variant.id == variantId)
-    if (variant.length > 0) {
-      const variantName = variant[0].name
-      return variantName
-    } else {
-      return "??"
-    }
-  }
+    const variant = product.variants.find((variant: Variant) => variant.id === variantId);
+    return variant ? variant.name : "??";
+  };
 
   return (
     <>

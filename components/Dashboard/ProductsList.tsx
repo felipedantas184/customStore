@@ -7,37 +7,55 @@ import Link from "next/link";
 import storeData from "@/utils/storeData";
 
 const ProductsList = ({ products }: { products: Product[] }) => {
-  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [visibleCount, setVisibleCount] = useState<number>(10); // começa mostrando 10
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const handleShowMore = () => {
     setVisibleCount((prev) => prev + 10);
   };
 
+  // Filtra os produtos pelo nome
+  const filteredProducts = products
+    .filter((product) =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => a.title.localeCompare(b.title));
+
   return (
     <Wrapper>
       <Title>Produtos</Title>
-      {products.slice(0, visibleCount).map((product: Product) => (
-        <div key={product.id} style={{ width: '100%' }}>
+
+      {/* Barra de pesquisa */}
+      <SearchInput
+        type="text"
+        placeholder="Buscar produto..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+      {filteredProducts.slice(0, visibleCount).map((product: Product) => (
+        <div key={product.id} style={{ width: "100%" }}>
           <ProductsCard
             product={product}
             selectedProduct={selectedProduct}
             setSelectedProduct={setSelectedProduct}
           />
           {product.id === selectedProduct && (
-            <ProductUpdate product={product} setSelectedProduct={setSelectedProduct} />
+            <ProductUpdate
+              product={product}
+              setSelectedProduct={setSelectedProduct}
+            />
           )}
         </div>
       ))}
 
       {/* Só mostra o botão se ainda houver mais produtos */}
-      {visibleCount < products.length && (
-        <LoadMoreButton onClick={handleShowMore}>
-          Ver mais
-        </LoadMoreButton>
+      {visibleCount < filteredProducts.length && (
+        <LoadMoreButton onClick={handleShowMore}>Ver mais</LoadMoreButton>
       )}
 
-      <AddButton href={'/auth/register'}>Adicionar Produto</AddButton>
+      <AddButton href={"/auth/register"}>Adicionar Produto</AddButton>
     </Wrapper>
   );
 };
@@ -55,7 +73,7 @@ const Wrapper = styled.div`
   align-items: center;
   gap: 16px;
 
-  background-color: #FFF;
+  background-color: #fff;
   border-radius: 10px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
@@ -65,9 +83,23 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h1`
-  color: #13131A;
+  color: #13131a;
   font-size: 20px;
   font-weight: 700;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: .25rem;
+  font-size: 14px;
+  outline: none;
+
+  &:focus {
+    border-color: ${storeData.secondaryColor};
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  }
 `;
 
 const AddButton = styled(Link)`
@@ -104,8 +136,9 @@ const AddButton = styled(Link)`
   vertical-align: baseline;
   -webkit-tap-highlight-color: transparent;
 
-  &:hover, &:focus {
-    background-color: #13131A;
+  &:hover,
+  &:focus {
+    background-color: #13131a;
     box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
   }
 
@@ -115,7 +148,7 @@ const AddButton = styled(Link)`
 
   &:active {
     background-color: ${storeData.secondaryColor};
-    box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
     transform: translateY(0);
   }
 `;
