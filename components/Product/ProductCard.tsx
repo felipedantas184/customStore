@@ -2,12 +2,15 @@ import { Product } from "@/types/productType";
 import storeData from "@/utils/storeData";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import ProductQuickViewModal from "./ProductQuickViewModal";
+import { FaCartShopping, FaEye } from "react-icons/fa6";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const cart = useSelector((state: any) => state.cart);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("easy-phone-cart", JSON.stringify(cart));
@@ -42,12 +45,28 @@ const ProductCard = ({ product }: { product: Product }) => {
           )}
         </Price>
       </TextWrapper>
-      <ViewProductButton
-        href={`/${product.id}`}
-        style={isOutOfStock ? { pointerEvents: 'none', opacity: 0.5 } : {}}
-      >
-        {isOutOfStock ? 'Indisponível' : 'Visualizar Produto'}
-      </ViewProductButton>
+      <ButtonGroup>
+        <ViewProductButton
+          href={`/${product.id}`}
+          style={isOutOfStock ? { pointerEvents: "none", opacity: 0.5 } : {}}
+        >
+          {isOutOfStock ? "Indisponível" : "Ver Detalhes"}
+        </ViewProductButton>
+
+        <EyeButton
+          disabled={isOutOfStock}
+          onClick={() => !isOutOfStock && setOpenModal(true)}
+        >
+          <FaCartShopping size={18} />
+        </EyeButton>
+      </ButtonGroup>
+
+      {openModal && (
+        <ProductQuickViewModal
+          product={product}
+          onClose={() => setOpenModal(false)}
+        />
+      )}
     </CardLi>
   );
 };
@@ -203,4 +222,29 @@ const SoldOutBadge = styled.div`
   z-index: 5;
   pointer-events: none;
   text-transform: uppercase;
+`;
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+`;
+const EyeButton = styled.button<{ disabled?: boolean }>`
+height: 100%;
+padding-left: 4px;
+padding-right: 4px;
+  border-radius: 6px;
+  border: 1px solid #d4d4d4;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ disabled }) => (disabled ? "#fff" : "#f6f6f6")};
+  }
 `;

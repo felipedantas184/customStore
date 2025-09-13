@@ -9,17 +9,15 @@ const ProductList = ({ products }: { products: Product[] }) => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortType, setSortType] = useState<"alpha-asc" | "alpha-desc" | "price-asc" | "price-desc">("alpha-asc");
   const [openSort, setOpenSort] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Funções de ordenação
-  // Função utilitária para pegar o menor preço de um produto
+  // Função utilitária: menor preço entre promo e normal
   const getLowestPrice = (product: Product) => {
     if (!product.variants || product.variants.length === 0) return Infinity;
-
-    return Math.min(
-      ...product.variants.map(v => v.promotional || v.price)
-    );
+    return Math.min(...product.variants.map(v => v.promotional || v.price));
   };
 
+  // Ordenações
   const sortFunctions = {
     "alpha-asc": (a: Product, b: Product) => a.title.localeCompare(b.title),
     "alpha-desc": (a: Product, b: Product) => b.title.localeCompare(a.title),
@@ -27,16 +25,22 @@ const ProductList = ({ products }: { products: Product[] }) => {
     "price-desc": (a: Product, b: Product) => getLowestPrice(b) - getLowestPrice(a),
   };
 
-
   const getSortedProducts = (list: Product[]) => {
     return [...list].sort(sortFunctions[sortType]);
   };
 
-  const filteredProducts = categoryFilter
+  // Filtro por categoria
+  const categoryFiltered = categoryFilter
     ? products.filter((product) => product.category === categoryFilter)
     : products;
 
-  const sortedProducts = getSortedProducts(filteredProducts);
+  // Filtro por pesquisa (título)
+  const searchFiltered = categoryFiltered.filter((product) =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Lista final (ordenada)
+  const sortedProducts = getSortedProducts(searchFiltered);
 
   return (
     <Wrapper>
@@ -55,28 +59,19 @@ const ProductList = ({ products }: { products: Product[] }) => {
           </SortButton>
           {openSort && (
             <SortMenu>
-              <SortOption onClick={() => { setSortType("alpha-asc"); setOpenSort(false); }}>
-                A → Z
-              </SortOption>
-              <SortOption onClick={() => { setSortType("alpha-desc"); setOpenSort(false); }}>
-                Z → A
-              </SortOption>
-              <SortOption onClick={() => { setSortType("price-asc"); setOpenSort(false); }}>
-                Preço: menor → maior
-              </SortOption>
-              <SortOption onClick={() => { setSortType("price-desc"); setOpenSort(false); }}>
-                Preço: maior → menor
-              </SortOption>
+              <SortOption onClick={() => { setSortType("alpha-asc"); setOpenSort(false); }}>A → Z</SortOption>
+              <SortOption onClick={() => { setSortType("alpha-desc"); setOpenSort(false); }}>Z → A</SortOption>
+              <SortOption onClick={() => { setSortType("price-asc"); setOpenSort(false); }}>Preço: menor → maior</SortOption>
+              <SortOption onClick={() => { setSortType("price-desc"); setOpenSort(false); }}>Preço: maior → menor</SortOption>
             </SortMenu>
           )}
         </SortWrapper>
       </GroupWrapper>
+
       {/* Filtros por categoria */}
       <BrandWrapper>
         <RadioInput type="radio" name="category" id="todos" defaultChecked />
-        <RadioLabel onClick={() => setCategoryFilter("")} htmlFor="todos">
-          Todos
-        </RadioLabel>
+        <RadioLabel onClick={() => setCategoryFilter("")} htmlFor="todos">Todos</RadioLabel>
         {products
           .map((product: Product) => product.category)
           .filter((category, index, arr) => arr.indexOf(category) === index)
@@ -90,6 +85,14 @@ const ProductList = ({ products }: { products: Product[] }) => {
             </div>
           ))}
       </BrandWrapper>
+
+      {/* Barra de pesquisa */}
+      <SearchInput
+        type="text"
+        placeholder="Buscar produtos..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       {/* Lista de produtos */}
       <GridList>
@@ -231,9 +234,24 @@ const SortOption = styled.button`
     background: #f5f5f5;
   }
 `;
+
 const GroupWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-`
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #13131a;
+    box-shadow: 0 0 0 2px rgba(19, 19, 26, 0.2);
+  }
+`;

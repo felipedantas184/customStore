@@ -19,14 +19,14 @@ import storeData from "@/utils/storeData";
 const CheckoutForm = () => {
   const cart = useSelector((state: any) => state.cart);
   const dispatch = useDispatch();
-  const router = useRouter()
+  const router = useRouter();
 
   const [personal, setPersonal] = useState({
     name: '',
     email: '',
     phone: '',
     cpf: '',
-  })
+  });
   const [pickUp, setPickUp] = useState(true);
   const [onLoad, setOnLoad] = useState(false);
   const [delivery, setDelivery] = useState({
@@ -38,27 +38,46 @@ const CheckoutForm = () => {
     city: '',
     state: '',
     freight: 0,
-  })
+  });
   const [paymentMethod, setPaymentMethod] = useState('Pix');
   const [mesage, setMesage] = useState('');
 
+  // estados para cupom
+  const [coupon, setCoupon] = useState("");
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [isCouponApplied, setIsCouponApplied] = useState(false);
+
+
+  const subtotal = cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0);
+  const discount = subtotal * discountPercent;
+  const total = subtotal + delivery.freight - discount;
+  
+  const applyCoupon = () => {
+    if (coupon.toUpperCase() === "DESCONTO10") {
+      setDiscountPercent(0.1); // 10%
+      alert("Cupom aplicado com sucesso!");
+      setIsCouponApplied(true);
+    } else {
+      setDiscountPercent(0);
+      alert("Cupom inválido.");
+    }
+  };
+
   useEffect(() => {
-    const deliveryMesageComposure = '*_Informações da Entrega:_*%0A' + delivery.address + ', ' + delivery.number + ' - ' + delivery.complement + '%0A' + delivery.zipCode + '%0A' + delivery.city + ', ' + delivery.state
-    const PersonalMesageComposure = '*_Informações da Cliente:_*%0A' + "```" + personal.name + '%0A' + personal.email + '%0A' + personal.phone + "```"
+    const deliveryMesageComposure = '*_Informações da Entrega:_*%0A' + delivery.address + ', ' + delivery.number + ' - ' + delivery.complement + '%0A' + delivery.zipCode + '%0A' + delivery.city + ', ' + delivery.state;
+    const PersonalMesageComposure = '*_Informações da Cliente:_*%0A' + "```" + personal.name + '%0A' + personal.email + '%0A' + personal.phone + "```";
     const cartMesageComposure = cart.reduce(function (prevVal: any, currVal: any, idx: any) {
       return idx == 0 ? Number(idx + 1) + '. ' + "```" + currVal.title + ` (x${currVal.quantity})` + "```" + `%0A${Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(currVal.price * currVal.quantity)}` : prevVal + '%0A%0A' + Number(idx + 1) + '. ' + "```" + currVal.title + ` (x${currVal.quantity})` + "```" + `%0A${Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(currVal.price * currVal.quantity)}`;
-    }, '')
-    setMesage("*RESUMO DA COMPRA*%0A%0A" + PersonalMesageComposure + '%0A%0A_______________________%0A%0A' + deliveryMesageComposure + '%0A%0A_______________________%0A%0A' + '*_Informações do Pedido:_*%0A%0A' + cartMesageComposure + '%0A%0A_______________________%0A%0A' + `*Total: ${Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price, 0))}*`)
-    console.log(mesage)
-
-  }, [cart, delivery, personal])
+    }, '');
+    setMesage("*RESUMO DA COMPRA*%0A%0A" + PersonalMesageComposure + '%0A%0A_______________________%0A%0A' + deliveryMesageComposure + '%0A%0A_______________________%0A%0A' + '*_Informações do Pedido:_*%0A%0A' + cartMesageComposure + '%0A%0A_______________________%0A%0A' + `*Total: ${Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(total)}*`);
+  }, [cart, delivery, personal, total]);
 
   function pad2(n: number) { return n < 10 ? '0' + n : n }
   const date = new Date();
-  const currentDate = date.getFullYear().toString() + pad2(date.getMonth() + 1) + pad2(date.getDate()) + pad2(date.getHours()) + pad2(date.getMinutes()) + pad2(date.getSeconds())
+  const currentDate = date.getFullYear().toString() + pad2(date.getMonth() + 1) + pad2(date.getDate()) + pad2(date.getHours()) + pad2(date.getMinutes()) + pad2(date.getSeconds());
 
   const handleOrder = async (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
     const cartOrder = cart.map((item: CartItem) => ({
       productId: item.id,
       variantId: item.selectedVariant.id,
@@ -66,7 +85,7 @@ const CheckoutForm = () => {
       quantity: item.quantity,
       price: item.price,
     }));
-    setOnLoad(true)
+    setOnLoad(true);
 
     try {
       const docRef = await addDoc(collection(fireDB, "orders"), {
@@ -75,7 +94,9 @@ const CheckoutForm = () => {
         delivery: pickUp ? null : delivery,
         deliveryType: pickUp ? "pickup" : "delivery",
         paymentMethod,
-        amount: cart.reduce((acc: number, curr: any) => acc + curr.price * curr.quantity, 0),
+        amount: total,
+        discount,
+        coupon,
         timeStamp: currentDate,
         status: 'Pendente'
       });
@@ -87,7 +108,9 @@ const CheckoutForm = () => {
         delivery: pickUp ? null : delivery,
         deliveryType: pickUp ? "pickup" : "delivery",
         paymentMethod,
-        amount: cart.reduce((acc: number, curr: any) => acc + curr.price * curr.quantity, 0),
+        amount: total,
+        discount,
+        coupon,
         date: currentDate,
         status: 'Pendente'
       };
@@ -114,10 +137,10 @@ const CheckoutForm = () => {
       console.error("Erro ao processar o pedido:", error);
       alert("Houve um erro ao processar seu pedido. Tente novamente.");
     }
-  }
+  };
 
   return (
-    <Wrapper onSubmit={handleOrder} >
+    <Wrapper onSubmit={handleOrder}>
       <Title><FaUser />Comprador</Title>
       <Personal personal={personal} setPersonal={setPersonal} />
       <Divider />
@@ -136,25 +159,51 @@ const CheckoutForm = () => {
       <Title><FaWallet />Pagamento</Title>
       <Payment paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
       <Divider />
+
+      {/* Cupom */}
+      <TopicWrapper>
+        <CouponInput
+          type="text"
+          placeholder="Digite o cupom"
+          value={coupon}
+          onChange={(e) => setCoupon(e.target.value)}
+          disabled={isCouponApplied}
+        />
+        <CouponButton
+          type="button"
+          onClick={applyCoupon}
+          disabled={isCouponApplied}
+        >
+          {isCouponApplied ? "Aplicado" : "Aplicar"}
+        </CouponButton>
+      </TopicWrapper>
+
+
       <TopicWrapper>
         <TopicFreight>Frete</TopicFreight>
         <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(delivery.freight)}</Span>
       </TopicWrapper>
       <TopicWrapper>
         <TopicFreight>Valor Itens</TopicFreight>
-        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0))}</Span>
+        <Span>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(subtotal)}</Span>
       </TopicWrapper>
+      {discount > 0 && (
+        <TopicWrapper>
+          <TopicFreight>Desconto</TopicFreight>
+          <Span>-{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(discount)}</Span>
+        </TopicWrapper>
+      )}
       <TopicWrapper>
         <Topic>Total</Topic>
-        <Price>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0) + delivery.freight)}</Price>
+        <Price>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', }).format(total)}</Price>
       </TopicWrapper>
-      <CheckoutButton disabled={onLoad} type="submit" >{(onLoad) ? 'Processando Pedido...' : 'Finalizar Pedido'}</CheckoutButton>
+
+      <CheckoutButton disabled={onLoad} type="submit">{(onLoad) ? 'Processando Pedido...' : 'Finalizar Pedido'}</CheckoutButton>
     </Wrapper>
   );
-}
+};
 
 export default CheckoutForm;
-
 
 
 
@@ -299,3 +348,39 @@ const RadioLabel = styled.label`
   gap: 8px;
   cursor: pointer;
 `
+const CouponInput = styled.input`
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: ${storeData.secondaryColor};
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+  }
+`;
+
+const CouponButton = styled.button`
+  padding: 10px 16px;
+  margin-left: 8px;
+  background-color: ${storeData.secondaryColor};
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #13131A;
+  }
+
+  &:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+  }
+`;

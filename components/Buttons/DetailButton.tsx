@@ -96,6 +96,10 @@ const AddToCart = styled.button`
   &:disabled {
     background-color: #545454;
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
 `
 const Favorite = styled.button`
   align-items: center;
@@ -139,5 +143,9 @@ const Favorite = styled.button`
     background-color: #FFF;
     box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
     transform: translateY(0);
+  }
+  
+  @media screen and (max-width: 768px) {
+    padding: 12px;
   }
 `
