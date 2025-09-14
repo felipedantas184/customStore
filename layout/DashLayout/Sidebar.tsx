@@ -19,9 +19,9 @@ const Sidebar = () => {
       <Wrapper>
         <Menu>
           <Item><PageLink href={'/auth/dashboard'}><FaHouse size={20} color="#F6F6F6" />Dashboard</PageLink></Item>
-          <Item><PageLink href={'/'}><FaBoxes size={20} color="#F6F6F6" />Pedidos</PageLink></Item>
-          <Item><PageLink href={'/'}><FaGears size={20} color="#F6F6F6" />Confirgurações</PageLink></Item>
-          <Item><PageLink href={'/'}><RxAvatar size={20} color="#F6F6F6" />Meu Perfil</PageLink></Item>
+          <Item><PageLink href={'/auth/dashboard/orders'}><FaBoxes size={20} color="#F6F6F6" />Pedidos</PageLink></Item>
+          <Item><PageLink href={'/auth/dashboard/settings'}><FaGears size={20} color="#F6F6F6" />Confirgurações</PageLink></Item>
+          <Item><PageLink href={'/auth/dashboard/orders'}><RxAvatar size={20} color="#F6F6F6" />Meu Perfil</PageLink></Item>
         </Menu>
         <Menu>
           <LogoutButton

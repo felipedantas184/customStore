@@ -3,7 +3,7 @@ import Delivery from "./Delivery";
 import Payment from "./Payment";
 import Personal from "./Personal";
 import { useDispatch, useSelector } from "react-redux";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import fireDB from "@/firebase/initFirebase";
 import { removeFromCart } from "@/redux/cart.slice";
 import { useRouter } from "next/router";
@@ -21,45 +21,60 @@ const CheckoutForm = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const [personal, setPersonal] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    cpf: '',
-  });
+  const [personal, setPersonal] = useState({ name: "", email: "", phone: "", cpf: "" });
   const [pickUp, setPickUp] = useState(true);
   const [onLoad, setOnLoad] = useState(false);
-  const [delivery, setDelivery] = useState({
-    zipCode: '',
-    address: '',
-    complement: '',
-    district: '',
-    number: '',
-    city: '',
-    state: '',
-    freight: 0,
-  });
+  const [delivery, setDelivery] = useState({ zipCode: '', address: '', complement: '', district: '', number: '', city: '', state: '', freight: 0, });
   const [paymentMethod, setPaymentMethod] = useState('Pix');
   const [mesage, setMesage] = useState('');
 
-  // estados para cupom
   const [coupon, setCoupon] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
   const [isCouponApplied, setIsCouponApplied] = useState(false);
-
+  const [availableCoupons, setAvailableCoupons] = useState<{ id: string; code: string; percent: number; active: boolean }[]>([]);
 
   const subtotal = cart.reduce((acc: any, curr: any) => acc + curr.price * curr.quantity, 0);
   const discount = subtotal * discountPercent;
   const total = subtotal + delivery.freight - discount;
-  
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const q = query(
+          collection(fireDB, "store", "info", "coupons"),
+          where("active", "==", true)
+        );
+        const querySnapshot = await getDocs(q);
+        const couponsList: { id: string; code: string; percent: number; active: boolean }[] = [];
+        querySnapshot.forEach((docu) => {
+          const d = docu.data();
+          couponsList.push({
+            id: docu.id,
+            code: (d.code || "").toUpperCase(),
+            percent: d.percent || 0,
+            active: d.active,
+          });
+        });
+        setAvailableCoupons(couponsList);
+      } catch (err) {
+        console.error("Erro ao buscar cupons:", err);
+      }
+    };
+
+    fetchCoupons();
+  }, []);
+
   const applyCoupon = () => {
-    if (coupon.toUpperCase() === "DESCONTO10") {
-      setDiscountPercent(0.1); // 10%
-      alert("Cupom aplicado com sucesso!");
+    if (isCouponApplied) return;  // já aplicado
+    const entered = coupon.trim().toUpperCase();
+    const found = availableCoupons.find((c) => c.code === entered && c.active);
+    if (found) {
+      setDiscountPercent(found.percent / 100); // por ex: percent = 10 → 0.1
       setIsCouponApplied(true);
+      alert(`Cupom ${found.code} aplicado! ${found.percent}% de desconto.`);
     } else {
       setDiscountPercent(0);
-      alert("Cupom inválido.");
+      alert("Cupom inválido ou inativo.");
     }
   };
 
