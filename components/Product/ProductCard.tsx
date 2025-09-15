@@ -76,7 +76,7 @@ export default ProductCard;
 
 const CardLi = styled.li`
   background-color: #FFFFFF;
-  padding: 0 4px 8px 4px;
+  padding: 0 0px 8px 0px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
