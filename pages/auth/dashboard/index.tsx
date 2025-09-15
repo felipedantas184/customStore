@@ -95,6 +95,7 @@ export default function DashboardPage({ products, orders }: { products: Product[
 
 
 const Section = styled.section`
+  width: 100%;
   background-color: #F6F6F6;
   padding: 25px 8px;
   margin-left: auto;

@@ -6,8 +6,9 @@ import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import Head from "next/head";
 import { useState } from "react";
 import styled from "styled-components";
-import { FaUser, FaTruck, FaCheckCircle } from "react-icons/fa";
+import { FaUser, FaTruck, FaCheckCircle, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
+/* ---------- SSR ---------- */
 export async function getServerSideProps() {
   const DBProducts = await getDocs(collection(fireDB, "products"));
   const products: any = [];
@@ -90,38 +91,34 @@ export default function DashboardPage({
                     <div>
                       <strong>Pedido #{order.id.slice(0, 6)}</strong>
                       <span>
-                        {order.timeStamp
-                          ? new Date(
-                              String(order.timeStamp)
-                            ).toLocaleDateString("pt-BR")
-                          : "-"}
+                        {order.timeStamp.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$3/$2/$1 $4:$5')}
                       </span>
                     </div>
-                    <StatusSelect
-                      value={order.status || "Pendente"}
-                      onChange={(e) =>
-                        handleStatusChange(order.id, e.target.value)
-                      }
-                    >
-                      <option value="Pendente">⏳ Pendente</option>
-                      <option value="Pago">💳 Pago</option>
-                      <option value="Enviado">🚚 Enviado</option>
-                      <option value="Concluído">✅ Concluído</option>
-                      <option value="Cancelado">❌ Cancelado</option>
-                    </StatusSelect>
+                    <StatusBadge status={order.status || "Pendente"}>
+                      {order.status || "Pendente"}
+                    </StatusBadge>
                   </OrderHeader>
 
                   <OrderBody>
                     <InfoLine>
                       <FaUser /> {order.personal?.name || "Cliente"}
                     </InfoLine>
+                    {order.personal?.phone && (
+                      <InfoLine>
+                        <FaPhoneAlt /> {order.personal.phone}
+                      </InfoLine>
+                    )}
                     <InfoLine>
                       <FaTruck />{" "}
                       {order.deliveryType === "delivery"
                         ? "Entrega"
                         : "Retirada"}
                     </InfoLine>
-
+                    {order.delivery?.address && (
+                      <InfoLine>
+                        <FaMapMarkerAlt /> {order.delivery.address}, {order.delivery.number} - {order.delivery.city} 
+                      </InfoLine>
+                    )}
                     <ItemsList>
                       {order.cart?.map((item: any, idx: number) => (
                         <li key={idx}>
@@ -138,7 +135,19 @@ export default function DashboardPage({
                   </OrderBody>
 
                   <OrderFooter>
-                    <span>
+                    {order.delivery?.freight && (
+                      <span>
+                        Frete:{" "}
+                        <strong>
+                          {Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(order.delivery?.freight || 0)}
+                        </strong>
+                      </span>
+                    )}
+
+                    <Total>
                       Total:{" "}
                       <strong>
                         {Intl.NumberFormat("pt-BR", {
@@ -146,8 +155,24 @@ export default function DashboardPage({
                           currency: "BRL",
                         }).format(order.amount || 0)}
                       </strong>
-                    </span>
+                    </Total>
                   </OrderFooter>
+
+                  <StatusActions>
+                    <label>Alterar status:</label>
+                    <StatusSelect
+                      value={order.status || "Pendente"}
+                      onChange={(e) =>
+                        handleStatusChange(order.id, e.target.value)
+                      }
+                    >
+                      <option value="Pendente">⏳ Pendente</option>
+                      <option value="Pago">💳 Pago</option>
+                      <option value="Enviado">🚚 Enviado</option>
+                      <option value="Concluído">✅ Concluído</option>
+                      <option value="Cancelado">❌ Cancelado</option>
+                    </StatusSelect>
+                  </StatusActions>
                 </OrderCard>
               ))}
             </CardsWrapper>
@@ -176,18 +201,23 @@ const Empty = styled.p`
 
 const CardsWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 20px;
 `;
 
 const OrderCard = styled.div`
   background: white;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  gap: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 `;
 
 const OrderHeader = styled.div`
@@ -206,12 +236,31 @@ const OrderHeader = styled.div`
   }
 `;
 
-const StatusSelect = styled.select`
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
-  background: #fafafa;
+const StatusBadge = styled.span<{ status: string }>`
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ status }) =>
+    status === "Pago"
+      ? "#065f46"
+      : status === "Enviado"
+        ? "#1d4ed8"
+        : status === "Concluído"
+          ? "#15803d"
+          : status === "Cancelado"
+            ? "#991b1b"
+            : "#92400e"};
+  background: ${({ status }) =>
+    status === "Pago"
+      ? "#d1fae5"
+      : status === "Enviado"
+        ? "#dbeafe"
+        : status === "Concluído"
+          ? "#dcfce7"
+          : status === "Cancelado"
+            ? "#fee2e2"
+            : "#fef3c7"};
 `;
 
 const OrderBody = styled.div`
@@ -231,7 +280,7 @@ const InfoLine = styled.div`
 `;
 
 const ItemsList = styled.ul`
-  margin: 6px 0 0 12px;
+  margin: 8px 0 0 14px;
   padding: 0;
   list-style: disc;
   font-size: 13px;
@@ -239,9 +288,39 @@ const ItemsList = styled.ul`
 `;
 
 const OrderFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  align-items: center;
   margin-top: auto;
-  font-size: 15px;
-  font-weight: 500;
+`;
+
+const Total = styled.span`
+  margin-left: auto;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+`;
+
+const StatusActions = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-top: 8px;
+`;
+
+const StatusSelect = styled.select`
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fafafa;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #6366f1;
+  }
 `;
