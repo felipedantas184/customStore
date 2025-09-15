@@ -136,13 +136,13 @@ const Item = styled.li`
   transition: 0.2s ease-in-out;
 
   &:hover {
-    color: ${storeData.secondaryColor};
+    color: ${storeData.primaryColor};
     transition: 0.2s ease-in-out;
   }
   &::after {
     display:block;
     content: '';
-    border-bottom: solid 2px ${storeData.secondaryColor};  
+    border-bottom: solid 2px ${storeData.primaryColor};  
     transform: scaleX(0);  
     transition: transform 250ms ease-in-out;
   }
