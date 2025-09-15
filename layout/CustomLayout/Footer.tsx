@@ -61,7 +61,7 @@ const Footer = () => {
 export default Footer;
 
 const Container = styled.section`
-  background-color: ${storeData.terciaryColor};
+  background-color: ${storeData.secondaryColor};
 
   display: flex;
   flex-direction: column;

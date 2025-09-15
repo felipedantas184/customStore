@@ -25,7 +25,7 @@ const Navbar = ({toggle, toggleCart} : any) => {
 export default Navbar;
 
 const Container = styled.header`
-  background-color: ${storeData.terciaryColor};
+  background-color: ${storeData.secondaryColor};
   height: 60px;
 
   display: flex;
