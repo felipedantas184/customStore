@@ -4,6 +4,8 @@ import { Product } from "@/types/productType";
 import { useState } from "react";
 import Banner from "./Banner";
 import { FaSortAmountDown } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
+import storeData from "@/utils/storeData";
 
 const ProductList = ({ products }: { products: Product[] }) => {
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -86,13 +88,15 @@ const ProductList = ({ products }: { products: Product[] }) => {
           ))}
       </BrandWrapper>
 
-      {/* Barra de pesquisa */}
-      <SearchInput
-        type="text"
-        placeholder="Buscar produtos..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+      <SearchWrapper>
+        <FiSearch color={storeData.secondaryColor} />
+        <SearchInput
+          type="text"
+          placeholder="Buscar produtos..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </SearchWrapper>
 
       {/* Lista de produtos */}
       <GridList>
@@ -151,9 +155,9 @@ const RadioInput = styled.input`
   display: none;
 
   &:checked + label {
-    background-color: #13131a;
+    background-color: ${storeData.secondaryColor};
     color: #ffffff;
-    border: 1px solid #c4c4c4;
+    border: 1px solid ${storeData.secondaryColor};
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }
 `;
@@ -161,10 +165,10 @@ const RadioLabel = styled.label`
   position: relative;
   color: #13131a;
   font-family: "Montserrat";
-  font-size: 16px;
-  border: 2px solid #c4c4c4;
+  font-size: 14px;
+  border: 1px solid ${storeData.secondaryColor};
   border-radius: 5px;
-  padding: 8px 16px;
+  padding: 8px 12px;
 
   display: flex;
   flex-direction: row;
@@ -192,8 +196,9 @@ const SortWrapper = styled.div`
 
 const SortButton = styled.button`
   border: none;
-  background: #c4c4c4;
-  color: #fff;
+  background: #FFF;
+  border: 1px solid ${storeData.secondaryColor};
+  color: ${storeData.secondaryColor};
   padding: 6px 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -204,8 +209,10 @@ const SortButton = styled.button`
   justify-content: center;
 
   &:hover {
-    background: #000;
-  }
+    background-color: ${storeData.secondaryColor};
+    color: #ffffff;
+    border: 1px solid ${storeData.secondaryColor};
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;  }
 `;
 
 const SortMenu = styled.div`
@@ -242,16 +249,43 @@ const GroupWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const SearchWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: absolute;
+    left: 12px;
+    font-size: 18px;
+    color: #888;
+    transition: color 0.2s ease;
+  }
+
+  &:focus-within svg {
+    color: #13131a;
+  }
+`;
+
 const SearchInput = styled.input`
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #c4c4c4;
-  border-radius: 5px;
-  font-size: 14px;
+  padding: 10px 12px 10px 40px; /* espaço pro ícone */
+  border: 1px solid ${storeData.secondaryColor};
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+
+  background-color: #fafafa;
 
   &:focus {
     outline: none;
-    border-color: #13131a;
-    box-shadow: 0 0 0 2px rgba(19, 19, 26, 0.2);
+    border-color: ${storeData.terciaryColor};
+    background-color: #fff;
+    box-shadow: 0 0 0 1px ${storeData.secondaryColor};
+  }
+
+  &::placeholder {
+    color: #aaa;
   }
 `;

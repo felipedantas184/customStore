@@ -46,31 +46,33 @@ const Card = styled.div`
 `
 const ImageWrapper = styled(Link)`
   position: relative;
-  max-width: 50px;
+  aspect-ratio: 3 / 4; // garante proporção quadrada
+  width: 100%;
+  max-width: 60px; // limite máximo que você pode ajustar
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
   > div {
     position: unset !important;
   }
 
   .image {
-    object-fit: contain;
+    object-fit: cover; // cobre todo o espaço do quadrado
     width: 100% !important;
+    height: 100% !important;
     position: relative !important;
-    height: unset !important;
 
     &:hover {
-      transform: scale(1.1);
-      transition: transform 0.5s ease-in-out;
+      transform: scale(1.05);
+      transition: transform 0.4s ease-in-out;
     }
   }
-`
+`;
 const TextWrapper = styled.div`
   flex: 1;
   display: flex;

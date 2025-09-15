@@ -1,12 +1,13 @@
 import { Product, Variant } from "@/types/productType";
 import Image from "next/image";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import DetailButton from "../Buttons/DetailButton";
 import ProductFeatures from "./ProductFeatures";
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import Link from "next/link";
 import { useSelector } from "react-redux";
+import storeData from "@/utils/storeData";
 
 const ProductDetail = ({ product }: { product: Product }) => {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0])
@@ -35,9 +36,11 @@ const ProductDetail = ({ product }: { product: Product }) => {
     <>
       <Section>
         <Wrapper>
-          <Link href={'/'} style={{ position: 'absolute', zIndex: 2, left: '16px', top: '16px', WebkitTapHighlightColor: 'transparent' }} >
-            <FaArrowLeft style={{ backgroundColor: '#C4C4C450', borderRadius: '50%', padding: '2px' }} size={20} color="#33333A" />
-          </Link>
+          <StyledLink href="/">
+            <IconWrapper>
+              <FaArrowLeft size={20} />
+            </IconWrapper>
+          </StyledLink>
           <ImageWrapper>
             <Image src={product.imageUrl[0]} alt={product.title} fill className={'image'} />
           </ImageWrapper>
@@ -189,20 +192,20 @@ const RadioInput = styled.input`
   display: none;
 
   &:checked + label {
-    background-color: #13131A;
-    color: #FFFFFF;
-    border: 1px solid #C4C4C4;
+    background-color: ${storeData.secondaryColor};
+    color: #ffffff;
+    border: 1px solid ${storeData.secondaryColor};
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }
 `
 const RadioLabel = styled.label`
   position: relative;
-  color: #13131A;
+  color: #13131a;
   font-family: "Montserrat";
-  font-size: 16px;
-  border: 2px solid #C4C4C4;
+  font-size: 14px;
+  border: 1px solid ${storeData.secondaryColor};
   border-radius: 5px;
-  padding: 8px 16px;
+  padding: 8px 12px;
 
   display: flex;
   flex-direction: row;
@@ -242,3 +245,48 @@ const Promotional = styled.h4`
   font-size: 18px;
   font-weight: 500;
 `
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+`;
+
+const StyledLink = styled(Link)`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  @media (max-width: 768px) {
+    top: 12px;
+    left: 12px;
+  }
+`;
+
+const IconWrapper = styled.div`
+  background-color: rgba(196, 196, 196, 0.4);
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #33333a;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(196, 196, 196, 0.6);
+    transform: scale(1.1);
+    animation: ${pulse} 0.4s ease-in-out;
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background-color: rgba(196, 196, 196, 0.8);
+  }
+`;

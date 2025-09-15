@@ -2,6 +2,7 @@ import { Product, Variant } from "@/types/productType";
 import { useState } from "react";
 import styled from "styled-components";
 import DetailButton from "../Buttons/DetailButton";
+import storeData from "@/utils/storeData";
 
 interface Props {
   product: Product;
@@ -175,9 +176,9 @@ const RadioInput = styled.input`
   display: none;
 
   &:checked + label {
-    background-color: #13131A;
-    color: #FFFFFF;
-    border: 1px solid #C4C4C4;
+    background-color: ${storeData.secondaryColor};
+    color: #ffffff;
+    border: 1px solid ${storeData.secondaryColor};
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   }
 `;
@@ -226,7 +227,8 @@ const RadioLabel = styled.label`
   color: #13131A;
   font-family: "Montserrat";
   font-size: 14px;
-  border: 2px solid #C4C4C4;
+  font-weight: 500;
+  border: 1px solid ${storeData.secondaryColor};
   border-radius: 5px;
   padding: 6px 12px;
   cursor: pointer;
@@ -237,6 +239,6 @@ const RadioLabel = styled.label`
 
 const StockLabel = styled.span`
   font-size: 12px;
-  color: #EE4B2B;
   margin-top: 2px;
+  font-weight: 400;
 `;
