@@ -4,47 +4,79 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import ProductQuickViewModal from "./ProductQuickViewModal";
-import { FaCartShopping, FaEye } from "react-icons/fa6";
+import { FaCartShopping } from "react-icons/fa6";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const cart = useSelector((state: any) => state.cart);
   const [openModal, setOpenModal] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(true);
 
   useEffect(() => {
     localStorage.setItem("easy-phone-cart", JSON.stringify(cart));
   }, [cart]);
 
-  const isOutOfStock = product.variants.every(variant => variant.stock === 0);
+  const isOutOfStock = product.variants.every(
+    (variant) => variant.stock === 0
+  );
+
+  const price = product.variants[0].price;
+  const promotional = product.variants[0].promotional || null;
 
   return (
     <CardLi>
       <ImageContainer>
         <ImageWrapper href={`/${product.id}`}>
+          {loadingImage && <Skeleton />}
           <Image
-            src={product.imageUrl ? product.imageUrl[0] : 'https://agprata.vercel.app/assets/icons/logo-og.jpg'}
+            src={
+              product.imageUrl
+                ? product.imageUrl[0]
+                : "https://agprata.vercel.app/assets/icons/logo-og.jpg"
+            }
             alt={product.title}
             fill
             sizes="(max-width: 384px)"
-            className={'image'}
+            className="image"
+            onLoadingComplete={() => setLoadingImage(false)}
           />
         </ImageWrapper>
         {isOutOfStock && <SoldOutBadge>Esgotado</SoldOutBadge>}
+        {!isOutOfStock && promotional && <PromoBadge>Promoção</PromoBadge>}
       </ImageContainer>
 
       <TextWrapper href={`/${product.id}`}>
         <Brand>{product.category}</Brand>
         <Title>{product.title}</Title>
-        <Price>
-          {Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(
-            product.variants[0].promotional || product.variants[0].price
+
+        <PriceWrapper>
+          {promotional ? (
+            <>
+              <OldPrice>
+                {Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(price)}
+              </OldPrice>
+              <Price>
+                {Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(promotional)}
+              </Price>
+            </>
+          ) : (
+            <Price>
+              {Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(price)}
+            </Price>
           )}
-        </Price>
+        </PriceWrapper>
       </TextWrapper>
+
       <ButtonGroup>
         <ViewProductButton
           href={`/${product.id}`}
@@ -53,12 +85,13 @@ const ProductCard = ({ product }: { product: Product }) => {
           {isOutOfStock ? "Indisponível" : "Ver Detalhes"}
         </ViewProductButton>
 
-        <EyeButton
+        <CartButton
           disabled={isOutOfStock}
           onClick={() => !isOutOfStock && setOpenModal(true)}
         >
-          <FaCartShopping size={18} />
-        </EyeButton>
+          <FaCartShopping size={16} />
+          <span>Adicionar</span>
+        </CartButton>
       </ButtonGroup>
 
       {openModal && (
@@ -73,18 +106,30 @@ const ProductCard = ({ product }: { product: Product }) => {
 
 export default ProductCard;
 
+/* -------- Estilos -------- */
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
+const pulse = keyframes`
+  0% { background-color: #f0f0f0; }
+  50% { background-color: #e0e0e0; }
+  100% { background-color: #f0f0f0; }
+`;
 
 const CardLi = styled.li`
-  background-color: #FFFFFF;
-  padding: 0 0px 8px 0px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  background-color: #fff;
+  padding: 0 0 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 4px;
-  border-radius: 8px;
+  border-radius: 10px;
+  box-shadow: rgba(99, 99, 99, 0.15) 0px 2px 6px;
+`;
 
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-`
 const ImageWrapper = styled(Link)`
   position: relative;
   width: 100%;
@@ -116,88 +161,78 @@ const ImageWrapper = styled(Link)`
     }
   }
 `;
+
+const Skeleton = styled.div`
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  animation: ${pulse} 1.5s infinite;
+`;
+
 const TextWrapper = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   -webkit-tap-highlight-color: transparent;
-`
+`;
+
 const Brand = styled.h3`
-  color: #44444A;
+  color: #44444a;
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  text-align: center;
-`
+`;
+
 const Title = styled.h2`
-  color: #13131A;
-  font-size: 13px;
+  color: #13131a;
+  font-size: 14px;
   font-weight: 600;
-  text-align: center;
   text-transform: capitalize;
 
   display: -webkit-box;
-  -webkit-line-clamp: 1; /* máximo de 2 linhas */
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+
+const PriceWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
 const Price = styled.h4`
-  color: #13131A;
+  color: #13131a;
   font-size: 14px;
   font-weight: 500;
-`
+`;
+
+const OldPrice = styled.h4`
+  color: #9a9a9a;
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: line-through;
+`;
+
 const ViewProductButton = styled(Link)`
-  margin: 0;
+  flex: 1;
   padding: 8px 12px;
-
   background-color: ${storeData.secondaryColor};
-  background-clip: padding-box;
-
-  border: none;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
-  box-sizing: border-box;
-
   color: #fff;
-  font-family: "Montserrat";
   font-size: 13px;
   font-weight: 600;
-  line-height: 1.25;
   text-decoration: none;
-  cursor: pointer;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  transition: all 250ms;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: baseline;
-  -webkit-tap-highlight-color: transparent;
-
-  &:hover, &:focus {
-    background-color: #13131A;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
-  }
+  transition: all 0.2s;
+  text-align: center;
 
   &:hover {
-    transform: translateY(-1px);
+    background-color: #13131a;
   }
+`;
 
-  &:active {
-    background-color: ${storeData.secondaryColor};
-    box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    background-color: #545454;
-  }
-`
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
@@ -209,6 +244,7 @@ const ImageContainer = styled.div`
   border-radius: 8px;
   overflow: hidden;
 `;
+
 const SoldOutBadge = styled.div`
   position: absolute;
   top: 8px;
@@ -220,31 +256,61 @@ const SoldOutBadge = styled.div`
   font-weight: 700;
   border-radius: 4px;
   z-index: 5;
-  pointer-events: none;
   text-transform: uppercase;
 `;
+
+const PromoBadge = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #ff5a5a;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 4px;
+  z-index: 5;
+  text-transform: uppercase;
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
   gap: 8px;
+  padding: 4px;
+  width: 100%;
+  justify-content: space-between;
 `;
-const EyeButton = styled.button<{ disabled?: boolean }>`
-height: 100%;
-padding-left: 4px;
-padding-right: 4px;
-  border-radius: 6px;
-  border: 1px solid #d4d4d4;
-  background: #fff;
+
+const CartButton = styled.button<{ disabled?: boolean }>`
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: ${({ disabled }) =>
+    disabled ? "#d4d4d4" : storeData.primaryColor};
+  color: #13131A;
+  font-size: 13px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  transition: 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: ${({ disabled }) => (disabled ? "#fff" : "#f6f6f6")};
+    color: ${storeData.primaryColor};
+    background: ${({ disabled }) =>
+      disabled ? "#d4d4d4" : '#13131A'};
+  }
+
+  span {
+    display: none;
+  }
+
+  @media (min-width: 480px) {
+    flex: 1;
+    span {
+      display: inline;
+    }
   }
 `;
