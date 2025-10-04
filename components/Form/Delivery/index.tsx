@@ -24,7 +24,7 @@ const Delivery = ({ delivery, setDelivery }: { delivery: Delivery, setDelivery: 
         const estado = uf?.toUpperCase();
 
         if (cidade === 'teresina') {
-          freight = 10;
+          freight = 0;
         } else if (cidade === 'timon') {
           freight = 20;
         } else if (['MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA'].includes(estado)) {
