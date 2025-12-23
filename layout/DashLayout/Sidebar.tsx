@@ -44,9 +44,14 @@ const Container = styled.nav`
   background-color: ${storeData.secondaryColor};
   min-width: 250px;
   height: 100%;
-  
-  transition: 0.7s ease-in-out;
-`
+  transition: 0.3s ease-in-out;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  }
+`;
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;

@@ -96,19 +96,19 @@ export default function DashboardPage({ products, orders }: { products: Product[
 
 const Section = styled.section`
   width: 100%;
-  background-color: #F6F6F6;
+  background-color: #f6f6f6;
   padding: 25px 8px;
-  margin-left: auto;
-  margin-right: auto;
-  
-  overflow-y: scroll;
-
+  overflow-y: auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  justify-content: flex-start;
   align-items: center;
-`
+
+  @media (max-width: 768px) {
+    padding: 16px 4px;
+  }
+`;
 const Double = styled.div`  
   width: 100%;
   

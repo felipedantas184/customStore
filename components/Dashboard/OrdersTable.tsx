@@ -161,6 +161,7 @@ const Wrapper = styled.div`
 const TableHeader = styled.div`
   width: 100%;
   background-color: ${storeData.secondaryColor};
+  overflow-y: hidden;
 `;
 
 const TableContent = styled.div`
