@@ -1,6 +1,6 @@
 {
-  "name": "Ag Prata",
-  "short_name": "Ag Prata",
+  "name": "AG Joias",
+  "short_name": "AG Joias",
   "icons": [
     {
       "src": "/assets/icons/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#fab89e",
+  "background_color": "#fab89e",
   "display": "standalone"
 }
