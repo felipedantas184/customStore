@@ -47,10 +47,10 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content={storeData.secondaryColor} />
 
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://agprata.vercel.app/" />
+          <meta property="og:url" content="https://agjoias.vercel.app/" />
           <meta property="og:title" content={storeData.title} />
           <meta property="og:description" content={storeData.description} />
-          <meta property="og:image" content="https://agprata.vercel.app/assets/icons/logo-og.jpg" />
+          <meta property="og:image" content="https://agjoias.vercel.app/assets/icons/logo-og.jpg" />
           <meta property="og:image:width" content="400" />
           <meta property="og:image:height" content="400" />
           <meta property="og:site_name" content={storeData.title} />
@@ -59,7 +59,7 @@ export default class MyDocument extends Document {
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={storeData.title} />
           <meta name="twitter:description" content={storeData.description} />
-          <meta name="twitter:image" content="https://agprata.vercel.app/assets/icons/logo-og.jpg" />
+          <meta name="twitter:image" content="https://agjoias.vercel.app/assets/icons/logo-og.jpg" />
 
         </Head>
         <body>

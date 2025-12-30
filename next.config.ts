@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'agprata.vercel.app',
         pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'agjoias.vercel.app',
+        pathname: '**'
       }
     ]
   },

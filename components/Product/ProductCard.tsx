@@ -33,7 +33,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             src={
               product.imageUrl
                 ? product.imageUrl[0]
-                : "https://agprata.vercel.app/assets/icons/logo-og.jpg"
+                : "https://agjoias.vercel.app/assets/icons/logo-og.jpg"
             }
             alt={product.title}
             fill

@@ -4,7 +4,7 @@ const storeData = {
   primaryColor: '#F6F6F6',
   secondaryColor: '#f9a382',
   terciaryColor: '#fab89e',
-  instagramUrl: 'https://www.instagram.com/prataag_/',
+  instagramUrl: 'https://www.instagram.com/ag.joiasthe/',
   whatsAppNumber: '5586999533190',
   email: 'gabirbraga27@gmail.com',
   locationUrl: 'https://maps.app.goo.gl/pByECpQqWVkxLH1W6'
